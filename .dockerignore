@@ -1,0 +1,15 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.idea/
+.git/
+.github/
+*.egg-info/
+dist/
+build/
+.env
+tests/
+README.md
+docker-compose.yml

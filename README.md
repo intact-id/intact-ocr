@@ -1,0 +1,49 @@
+# PaddleOCR Service
+
+Minimal PaddleOCR module and API for checking OCR extraction on local images.
+
+## Runtime requirements
+
+- Python 3.7 - 3.10
+- PaddlePaddle 2.6.1
+- PaddleOCR 2.7.3
+- At least 4GB RAM
+- At least 3GB free disk
+
+## Current host status
+
+This host currently reports `Python 3.12.3`, which is incompatible with the pinned Paddle versions above.
+You will need a `python3.10` environment before installation and runtime verification.
+
+## Install
+
+```bash
+python3.10 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -e .
+```
+
+## Run API
+
+```bash
+uvicorn paddleocr_service.main:app --reload --port 8000
+```
+
+## Health check
+
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+## OCR request
+
+```bash
+curl -X POST http://127.0.0.1:8000/ocr \
+  -F "file=@/path/to/id-image.jpg"
+```
+
+## Notes
+
+- This is only the PaddleOCR extraction layer.
+- It does not yet include document detection, cropping, field mapping, MRZ parsing, or validation.

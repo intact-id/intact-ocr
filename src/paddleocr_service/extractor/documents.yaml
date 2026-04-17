@@ -1,0 +1,394 @@
+# ---------------------------------------------------------------------------
+# Document Registry — per-country, per-document-type field label vocabulary
+# ---------------------------------------------------------------------------
+# Structure:
+#   countries:
+#     <ISO-3166-1-alpha3>:
+#       name: <human readable>
+#       languages: [<ISO-639-1 codes>]
+#       documents:
+#         <doc_type>:          # national_id | passport | drivers_license | residence_permit
+#           classifier_keywords: [...]  # keywords that CONFIRM this doc type for this country
+#           fields:
+#             <field_name>: [label variant 1, label variant 2, ...]
+#
+# Field names must match DocumentFields attributes:
+#   full_name, surname, given_names, id_number, date_of_birth, sex,
+#   nationality, expiry_date, date_of_issue, place_of_birth,
+#   district_of_birth, place_of_issue
+#
+# All label matching is case-insensitive and space/punctuation-normalised
+# (via norm_text). Add new entries freely; the code picks the best match
+# at runtime.
+# ---------------------------------------------------------------------------
+
+countries:
+
+  # =========================================================================
+  # KENYA
+  # =========================================================================
+  KEN:
+    name: Kenya
+    languages: [en, sw]
+
+    documents:
+
+      national_id:
+        classifier_keywords:
+          - "NATIONAL IDENTITY CARD"
+          - "NATIONAL ID CARD"
+          - "KITAMBULISHO CHA TAIFA"
+          - "JAMHURI YA KENYA"
+          - "REPUBLIC OF KENYA"
+        fields:
+          id_number:
+            - "ID. NO."
+            - "ID NO"
+            - "ID NUMBER"
+            - "IDENTITY NUMBER"
+            - "NAMBARI YA KITAMBULISHO"
+          full_name:
+            - "FULL NAME"
+            - "FULL NAMES"
+            - "NAME"
+            - "JINA KAMILI"
+          surname:
+            - "SURNAME"
+            - "LAST NAME"
+            - "JINA LA UKOO"
+          given_names:
+            - "GIVEN NAMES"
+            - "OTHER NAMES"
+            - "FIRST NAME"
+            - "MAJINA"
+          date_of_birth:
+            - "DATE OF BIRTH"
+            - "D.O.B"
+            - "DOB"
+            - "TAREHE YA KUZALIWA"
+          sex:
+            - "SEX"
+            - "GENDER"
+            - "JINSIA"
+          district_of_birth:
+            - "DISTRICT OF BIRTH"
+            - "DISTRICT"
+            - "COUNTY"
+            - "WILAYA YA KUZALIWA"
+          place_of_birth:
+            - "PLACE OF BIRTH"
+            - "BIRTHPLACE"
+            - "MAHALI ALIPOZALIWA"
+          place_of_issue:
+            - "PLACE OF ISSUE"
+            - "ISSUED AT"
+            - "MAHALI PA KUTOLEWA"
+          date_of_issue:
+            - "DATE OF ISSUE"
+            - "ISSUE DATE"
+            - "TAREHE YA KUTOLEWA"
+          nationality:
+            - "NATIONALITY"
+            - "UTAIFA"
+
+      passport:
+        classifier_keywords:
+          - "PASSPORT"
+          - "PASIPOTI"
+          - "REPUBLIC OF KENYA"
+        fields:
+          id_number:
+            - "PASSPORT NO"
+            - "PASSPORT NUMBER"
+            - "DOC NO"
+            - "DOCUMENT NUMBER"
+            - "NAMBARI YA PASIPOTI"
+          surname:
+            - "SURNAME"
+            - "LAST NAME"
+            - "JINA LA UKOO"
+          given_names:
+            - "GIVEN NAMES"
+            - "GIVEN NAME"
+            - "OTHER NAMES"
+            - "FIRST NAME"
+            - "MAJINA"
+          date_of_birth:
+            - "DATE OF BIRTH"
+            - "D.O.B"
+            - "TAREHE YA KUZALIWA"
+          sex:
+            - "SEX"
+            - "GENDER"
+            - "JINSIA"
+          nationality:
+            - "NATIONALITY"
+            - "UTAIFA"
+          date_of_issue:
+            - "DATE OF ISSUE"
+            - "ISSUE DATE"
+            - "TAREHE YA KUTOLEWA"
+          expiry_date:
+            - "DATE OF EXPIRY"
+            - "EXPIRY DATE"
+            - "VALID UNTIL"
+            - "TAREHE YA KUMALIZIKA"
+          place_of_birth:
+            - "PLACE OF BIRTH"
+            - "BIRTHPLACE"
+            - "MAHALI ALIPOZALIWA"
+
+      drivers_license:
+        classifier_keywords:
+          - "DRIVING LICENCE"
+          - "DRIVING LICENSE"
+          - "LESENI YA UDEREVA"
+          - "NTSA"
+          - "NATIONAL TRANSPORT AND SAFETY"
+        fields:
+          id_number:
+            - "LICENCE NO"
+            - "LICENSE NO"
+            - "DL NO"
+            - "DRIVER NO"
+            - "PERMIT NO"
+            - "ID NO"
+          full_name:
+            - "FULL NAME"
+            - "NAME"
+            - "JINA KAMILI"
+          surname:
+            - "SURNAME"
+            - "JINA LA UKOO"
+          given_names:
+            - "GIVEN NAMES"
+            - "OTHER NAMES"
+            - "MAJINA"
+          date_of_birth:
+            - "DATE OF BIRTH"
+            - "D.O.B"
+            - "TAREHE YA KUZALIWA"
+          sex:
+            - "SEX"
+            - "GENDER"
+            - "JINSIA"
+          nationality:
+            - "NATIONALITY"
+            - "UTAIFA"
+          expiry_date:
+            - "DATE OF EXPIRY"
+            - "EXPIRY DATE"
+            - "VALID UNTIL"
+            - "VALID TO"
+          date_of_issue:
+            - "DATE OF ISSUE"
+            - "ISSUE DATE"
+
+      residence_permit:
+        classifier_keywords:
+          - "ALIEN REGISTRATION"
+          - "ALIEN CARD"
+          - "CERTIFICATE OF REGISTRATION OF ALIEN"
+          - "FOREIGN NATIONAL"
+          - "LEAVE TO REMAIN"
+        fields:
+          id_number:
+            - "ALIEN REG NO"
+            - "REGISTRATION NUMBER"
+            - "PERMIT NO"
+            - "CERTIFICATE NO"
+          full_name:
+            - "FULL NAME"
+            - "NAME"
+          date_of_birth:
+            - "DATE OF BIRTH"
+            - "D.O.B"
+          sex:
+            - "SEX"
+            - "GENDER"
+          nationality:
+            - "NATIONALITY"
+          expiry_date:
+            - "DATE OF EXPIRY"
+            - "VALID UNTIL"
+          date_of_issue:
+            - "DATE OF ISSUE"
+
+  # =========================================================================
+  # DEMOCRATIC REPUBLIC OF CONGO (DRC)
+  # =========================================================================
+  COD:
+    name: Democratic Republic of Congo
+    languages: [fr]
+
+    documents:
+
+      national_id:
+        classifier_keywords:
+          - "REPUBLIQUE DEMOCRATIQUE DU CONGO"
+          - "CARTE D'IDENTITE"
+          - "CARTE NATIONALE D'IDENTITE"
+          - "CARTE D IDENTITE"          # OCR apostrophe miss
+          - "SERVICE DE L'ETAT CIVIL"
+          - "ETAT CIVIL"
+          - "DIRECTION GENERALE DE MIGRATION"
+          - "DGM"
+          # Voter card (same extraction logic as national ID)
+          - "CARTE D'ELECTEUR"
+          - "CARTE DELECTEUR"          # OCR apostrophe miss
+          - "CARTE D ELECTEUR"         # OCR space variant
+          - "COMMISSION ELECTORALE"
+          - "ELECTEUR"
+        fields:
+          id_number:
+            - "NUMERO"
+            - "N°"
+            - "NO."
+            - "NUM"
+            - "NUMERO D'IDENTITE"
+            - "N° D'IDENTITE"
+            - "NUMERO D IDENTITE"       # OCR apostrophe miss
+          full_name:
+            - "NOM ET PRENOM"
+            - "NOMS ET PRENOMS"
+            - "NOM COMPLET"
+            - "NOM ET PRENOMS"
+          surname:
+            - "NOM"
+            - "NOM DE FAMILLE"
+          given_names:
+            - "PRENOM"
+            - "PRENOMS"
+            - "PRÉNOMS"
+            - "POSTNOMI"
+            - "POSTNOMI/PRENOM"
+            - "POSTNOM"
+          date_of_birth:
+            - "DATE DE NAISSANCE"
+            - "NEE LE"
+            - "NE LE"
+            - "DATE ET LIEU DE NAISSANCE"
+            - "DATE & LIEU DE NAISSANCE"
+          place_of_birth:
+            - "LIEU DE NAISSANCE"
+            - "DATE ET LIEU DE NAISSANCE"
+            - "DATE & LIEU DE NAISSANCE"
+            - "LIEU ET DATE DE NAISSANCE"
+          sex:
+            - "SEXE"
+            - "GENRE"
+          nationality:
+            - "NATIONALITE"
+            - "NATIONALITÉ"
+          date_of_issue:
+            - "DATE DE DELIVRANCE"
+            - "DELIVREE LE"
+            - "DATE ET LIEU DE DELIVRANCE"
+            - "DATE & LIEU DE DELIVRANCE"
+            - "DATE DE DÉLIVRANCE"
+          place_of_issue:
+            - "LIEU DE DELIVRANCE"
+            - "DELIVREE A"
+            - "LIEU ET DATE DE DELIVRANCE"
+          expiry_date:
+            - "DATE D'EXPIRATION"
+            - "DATE D EXPIRATION"       # OCR apostrophe miss
+            - "VALABLE JUSQU'AU"
+            - "VALABLE JUSQU AU"        # OCR apostrophe miss
+            - "EXPIRE LE"
+            - "DATE DE FIN DE VALIDITE"
+
+      passport:
+        classifier_keywords:
+          - "PASSEPORT"
+          - "REPUBLIQUE DEMOCRATIQUE DU CONGO"
+          - "PASSPORT REPUBLIQUE"
+        fields:
+          id_number:
+            - "NUMERO DE PASSEPORT"
+            - "N° DU PASSEPORT"
+            - "N° PASSEPORT"
+            - "PASSPORT NO"
+          surname:
+            - "NOM"
+            - "NOM DE FAMILLE"
+          given_names:
+            - "PRENOM"
+            - "PRENOMS"
+          date_of_birth:
+            - "DATE DE NAISSANCE"
+            - "NEE LE"
+            - "NE LE"
+          sex:
+            - "SEXE"
+            - "GENRE"
+          nationality:
+            - "NATIONALITE"
+          date_of_issue:
+            - "DATE DE DELIVRANCE"
+            - "DELIVREE LE"
+          expiry_date:
+            - "DATE D'EXPIRATION"
+            - "DATE D EXPIRATION"
+            - "DATE DE FIN DE VALIDITE"
+            - "VALABLE JUSQU'AU"
+          place_of_birth:
+            - "LIEU DE NAISSANCE"
+          place_of_issue:
+            - "LIEU DE DELIVRANCE"
+            - "DELIVREE A"
+
+      drivers_license:
+        classifier_keywords:
+          - "PERMIS DE CONDUIRE"
+          - "REPUBLIQUE DEMOCRATIQUE DU CONGO"
+          - "OFFICE DES ROUTES"
+        fields:
+          id_number:
+            - "PERMIS NO"
+            - "N° DU PERMIS"
+            - "NUMERO DU PERMIS"
+            - "NO D'IDENTITE"
+            - "N° D'IDENTITE"
+          surname:
+            - "NOM"
+            - "NOM DE FAMILLE"
+          given_names:
+            - "PRENOM"
+            - "PRENOMS"
+          date_of_birth:
+            - "DATE DE NAISSANCE"
+            - "NEE LE"
+            - "NE LE"
+            - "DATE ET LIEU DE NAISSANCE"
+          place_of_birth:
+            - "LIEU DE NAISSANCE"
+            - "DATE ET LIEU DE NAISSANCE"
+          sex:
+            - "SEXE"
+            - "GENRE"
+          nationality:
+            - "NATIONALITE"
+          date_of_issue:
+            - "DATE DE DELIVRANCE"
+            - "DELIVREE LE"
+          expiry_date:
+            - "DATE D'EXPIRATION"
+            - "DATE D EXPIRATION"
+            - "VALABLE JUSQU'AU"
+            - "VALABLE JUSQU AU"
+
+  # =========================================================================
+  # EXTENSION TEMPLATE — copy-paste to add a new country
+  # =========================================================================
+  # XXX:
+  #   name: Country Name
+  #   languages: [xx]
+  #   documents:
+  #     national_id:
+  #       classifier_keywords:
+  #         - "COUNTRY SPECIFIC HEADER"
+  #       fields:
+  #         id_number:      ["ID NO"]
+  #         full_name:      ["FULL NAME"]
+  #         date_of_birth:  ["DATE OF BIRTH"]

@@ -1,0 +1,24 @@
+services:
+  ocr-service:
+    image: frankmwangi8118/paddleocr-service:latest
+    restart: unless-stopped
+    command: ./scripts/start.sh
+    environment:
+      - PORT=8000
+      - WORKERS=1
+      - API_KEY=${OCR_API_KEY:-your_ocr_api_key}
+      - API_SECRET=${OCR_API_SECRET:-your_ocr_api_secret}
+      - OCR_LANG=en
+      - USE_ANGLE_CLS=true
+      - MAX_FILE_SIZE_MB=10
+    shm_size: 2gb
+    networks:
+      app-net:
+        aliases:
+          - ocr-service
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+networks:
+  app-net:
+    external: true

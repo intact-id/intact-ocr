@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+src/paddleocr_service/__init__.py
+src/paddleocr_service/main.py
+src/paddleocr_service/service.py
+src/paddleocr_service.egg-info/PKG-INFO
+src/paddleocr_service.egg-info/SOURCES.txt
+src/paddleocr_service.egg-info/dependency_links.txt
+src/paddleocr_service.egg-info/requires.txt
+src/paddleocr_service.egg-info/top_level.txt
