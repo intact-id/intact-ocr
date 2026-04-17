@@ -2,16 +2,18 @@ name: Build & Push Docker Image
 
 on:
   push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+    branches: 
+      - develop
 
 env:
-  DOCKER_IMAGE: frankmwangi8118/paddleocr-service
+  DOCKER_IMAGE: frankmwangi8118/intact-ocr
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      
 
     steps:
       - name: Checkout code

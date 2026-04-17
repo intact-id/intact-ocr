@@ -173,21 +173,21 @@ class NationalIdExtractor:
                 if _matches(line, surname_labels) and not fields.surname:
                     # Inline first (e.g. "NomMBAYA")
                     v = extract_inline_value(line, surname_labels)
-                    if not v or not _is_name_value(v):
-                        v = _value_after(texts, i, 1)
                     if v and _is_name_value(v):
-                        cleaned = v.replace('/', ' ').strip().upper()
-                        if len(cleaned) >= 2:
-                            fields.surname = cleaned
+                        fields.surname = v.replace('/', ' ').strip().upper()
+                    elif not fields.surname:
+                        v = _value_after(texts, i, 1)
+                        if v and _is_name_value(v) and _looks_like_name(v):
+                            fields.surname = v.strip().upper()
                 if _matches(line, given_labels) and not fields.given_names:
                     # Inline first (e.g. "Postnomi/PrenomTSHIBANGU/DAN")
                     v = extract_inline_value(line, given_labels)
-                    if not v or not _is_name_value(v):
-                        v = _value_after(texts, i, 1)
                     if v and _is_name_value(v):
-                        cleaned = v.replace('/', ' ').strip().upper()
-                        if len(cleaned) >= 2:
-                            fields.given_names = cleaned
+                        fields.given_names = v.replace('/', ' ').strip().upper()
+                    elif not fields.given_names:
+                        v = _value_after(texts, i, 1)
+                        if v and _is_name_value(v) and _looks_like_name(v):
+                            fields.given_names = v.strip().upper()
 
             if fields.surname and fields.given_names:
                 fields.full_name = f"{fields.given_names} {fields.surname}"
