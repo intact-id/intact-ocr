@@ -19,9 +19,6 @@ RUN pip install --no-cache-dir .
 COPY scripts/ ./scripts/
 RUN chmod +x ./scripts/start.sh
 
-# Pre-download PaddleOCR models at build time so startup is fast
-RUN python -c "from paddleocr import PaddleOCR; PaddleOCR(use_angle_cls=True, lang='en')"
-
 ENV PORT=8000
 
 EXPOSE ${PORT}
