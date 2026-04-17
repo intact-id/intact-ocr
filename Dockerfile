@@ -12,7 +12,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Install Python deps first (layer caching — only re-runs when pyproject.toml changes)
+# Upgrade pip and pre-install build tools so setuptools>=68 resolves correctly
+RUN pip install --no-cache-dir --upgrade pip setuptools>=68 wheel
+
+# Install Python deps (layer caching — only re-runs when pyproject.toml/src changes)
 COPY pyproject.toml ./
 COPY src/ ./src/
 RUN pip install --no-cache-dir .
