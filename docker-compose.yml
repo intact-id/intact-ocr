@@ -1,5 +1,6 @@
 services:
   ocr-service:
+    build: .
     image: frankmwangi8118/paddleocr-service:latest
     restart: unless-stopped
     command: ./scripts/start.sh
