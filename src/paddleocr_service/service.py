@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import io
+import threading
 from dataclasses import dataclass
 from typing import Any
 
@@ -20,12 +21,17 @@ class OcrLine:
 class PaddleOcrService:
     def __init__(self, *, use_angle_cls: bool = True, lang: str = "en") -> None:
         self._ocr = PaddleOCR(use_angle_cls=use_angle_cls, lang=lang)
+        # The Paddle Inference predictor reuses internal tensor buffers and is
+        # not safe to call from multiple threads at once — concurrent calls
+        # corrupt each other's buffers (and can segfault the process).
+        self._lock = threading.Lock()
 
     def extract_from_bytes(self, payload: bytes) -> dict[str, Any]:
         """Synchronous OCR — CPU-bound, blocks the calling thread."""
         image = Image.open(io.BytesIO(payload)).convert("RGB")
         image_array = np.array(image)
-        result = self._ocr.ocr(image_array, cls=True)
+        with self._lock:
+            result = self._ocr.ocr(image_array, cls=True)
         lines = self._normalize(result)
 
         return {

@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/paddleocr-service.iml" filepath="$PROJECT_DIR$/.idea/paddleocr-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/paddleocr-service@1.iml" filepath="$PROJECT_DIR$/.idea/paddleocr-service@1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/paddleocr-service@2.iml" filepath="$PROJECT_DIR$/.idea/paddleocr-service@2.iml" />
     </modules>
   </component>
 </project>

@@ -28,4 +28,9 @@ ENV PORT=8000
 
 EXPOSE ${PORT}
 
+# start-period gives the model time to load on first boot before failed
+# checks count against the container.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:${PORT}/health', timeout=3)" || exit 1
+
 CMD ["./scripts/start.sh"]

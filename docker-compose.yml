@@ -4,21 +4,42 @@ services:
     image: frankmwangi8118/paddleocr-service:latest
     restart: unless-stopped
     command: ./scripts/start.sh
+    ports:
+      - "8001:8000"
     environment:
+      # Each worker loads its own PaddleOCR model into memory — measure
+      # actual per-worker RSS under load before raising this, and size
+      # deploy.resources.limits.memory below to match (workers * RSS + slack).
       - PORT=8000
-      - WORKERS=1
+      - WORKERS=${OCR_WORKERS:-3}
+      - WORKER_TIMEOUT=60
+      - MAX_REQUESTS=500
+      - MAX_REQUESTS_JITTER=100
       - API_KEY=${OCR_API_KEY:-your_ocr_api_key}
       - API_SECRET=${OCR_API_SECRET:-your_ocr_api_secret}
       - OCR_LANG=en
       - USE_ANGLE_CLS=true
       - MAX_FILE_SIZE_MB=10
+      - MAX_CONCURRENT_OCR=4
+      - MAX_QUEUED_OCR=8
+      - OCR_TIMEOUT_SECONDS=30
+    volumes:
+      - paddleocr-cache:/root/.paddleocr
     shm_size: 2gb
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4g
     networks:
       app-net:
         aliases:
           - ocr-service
     labels:
       - com.centurylinklabs.watchtower.enable=true
+
+volumes:
+  paddleocr-cache:
 
 networks:
   app-net:
