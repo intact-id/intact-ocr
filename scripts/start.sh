@@ -12,6 +12,19 @@ GRACEFUL_TIMEOUT="${GRACEFUL_TIMEOUT:-30}"
 MAX_REQUESTS="${MAX_REQUESTS:-500}"
 MAX_REQUESTS_JITTER="${MAX_REQUESTS_JITTER:-100}"
 
+# PaddleOCR's model downloader has no locking: if the cache volume is empty
+# and multiple gunicorn workers boot at once, they race to download/extract
+# the same tar file and whichever finishes first deletes it out from under
+# the others, crashing them. Warm the cache in a single process up front so
+# workers only ever read already-present files from disk.
+echo "Warming up OCR model cache..."
+python -c "
+from paddleocr_service.config import settings
+from paddleocr_service.service import PaddleOcrService
+PaddleOcrService(use_angle_cls=settings.use_angle_cls, lang=settings.ocr_lang)
+print('Model cache ready.')
+"
+
 echo "Starting PaddleOCR Service on port ${PORT} with ${WORKERS} worker(s)..."
 
 exec gunicorn paddleocr_service.main:app \
