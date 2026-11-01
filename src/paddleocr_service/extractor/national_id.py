@@ -39,6 +39,17 @@ def _value_after(texts: list[str], idx: int, window: int = 3) -> Optional[str]:
     return None
 
 
+# Card header text ("REPUBLIC OF KENYA", "JAMHURI YA KENYA", …) is all letters and several words, so
+# it looks like a name. Matched as substrings because OCR often merges words ("REPUBLICOF KENYA",
+# "JAMHURIYA KENYA") and whole-word checks then miss it.
+_HEADER_MARKERS = ("republic", "jamhuri", "kenya", "government", "ministry")
+
+
+def _is_card_header(text: str) -> bool:
+    t = text.lower()
+    return any(marker in t for marker in _HEADER_MARKERS)
+
+
 def _looks_like_name(text: str) -> bool:
     t = text.strip().upper()
     if len(t) < 3 or len(t) > 70:
@@ -50,6 +61,8 @@ def _looks_like_name(text: str) -> bool:
     if len(words) < 2:
         return False
     if any(w.lower() in _LABEL_WORDS for w in words):
+        return False
+    if _is_card_header(t):
         return False
     return True
 
@@ -199,10 +212,15 @@ class NationalIdExtractor:
                 # Look for "FULL NAME" label
                 for i, line in enumerate(texts):
                     if _matches(line, full_labels):
-                        # Inline first (e.g. "FRLNAVESJOHN DOE")
+                        # Inline first (e.g. "FRLNAVESJOHN DOE"). A plural label leaves junk
+                        # behind ("FULL NAMES" minus "full name" = "S"), so only trust the inline
+                        # value when it's name-like; otherwise read the lines below the label.
                         v = extract_inline_value(line, full_labels)
-                        if not v:
-                            v = _value_after(texts, i)
+                        if not (v and _looks_like_name(v)):
+                            v = next(
+                                (c.strip() for c in texts[i + 1:i + 3] if _looks_like_name(c)),
+                                None,
+                            )
                         if v and _looks_like_name(v):
                             fields.full_name = v.upper()
                             conf.full_name = round(line_conf.get(v, 0.85), 3)
