@@ -73,6 +73,56 @@ def _is_plausible_id(value: str) -> bool:
     return digits >= _MIN_DIGITS and "/" not in value
 
 
+# Labels of other numbers printed next to the ID number (e.g. the card serial on Kenyan IDs).
+_OTHER_NUMBER_LABELS = ("serial", "nambari ya kadi")
+
+
+def _box_center(box) -> Optional[tuple[float, float]]:
+    try:
+        xs = [p[0] for p in box]
+        ys = [p[1] for p in box]
+        return (sum(xs) / len(xs), sum(ys) / len(ys))
+    except (TypeError, IndexError, ZeroDivisionError):
+        return None
+
+
+def _closest_id_value(texts: list[str], label_idx: int, line_boxes: dict[str, list]) -> Optional[str]:
+    """
+    The plausible ID-number line nearest (by box centre) to the label at texts[label_idx],
+    skipping any number that sits closer to another number's label (e.g. "SERIAL NUMBER").
+    None when positions are missing or nothing plausible is nearby.
+    """
+    label_c = _box_center(line_boxes.get(texts[label_idx]))
+    if label_c is None:
+        return None
+    other_label_cs = [
+        c for t in texts
+        if any(lbl in norm_text(t) for lbl in _OTHER_NUMBER_LABELS)
+        and (c := _box_center(line_boxes.get(t))) is not None
+    ]
+
+    def dist(a, b):
+        return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
+
+    best, best_d = None, None
+    lo, hi = max(0, label_idx - 6), min(len(texts), label_idx + 7)
+    for j in range(lo, hi):
+        if j == label_idx:
+            continue
+        m = _ID_PATTERN.search(texts[j].upper())
+        if not (m and _is_plausible_id(m.group(1))) or parse_date(texts[j]):
+            continue
+        c = _box_center(line_boxes.get(texts[j]))
+        if c is None:
+            continue
+        d = dist(c, label_c)
+        if any(dist(c, oc) < d for oc in other_label_cs):
+            continue  # belongs to the serial number (or similar), not the ID number
+        if best_d is None or d < best_d:
+            best, best_d = texts[j], d
+    return best
+
+
 def _resolve_labels(country: Optional[str], doc_type: str, field: str, fallback: list[str]) -> list[str]:
     """
     Return country-specific labels from the registry when available, merged
@@ -104,7 +154,10 @@ class NationalIdExtractor:
         texts: list[str],
         line_conf: dict[str, float],
         country: Optional[str] = None,
+        line_boxes: Optional[dict[str, list]] = None,
     ) -> tuple[DocumentFields, FieldConfidence]:
+        """line_boxes: OCR box (4 corner points) per line text, when available — used to pick
+        the value that sits next to its label on multi-column cards."""
         fields = DocumentFields()
         conf = FieldConfidence()
 
@@ -142,6 +195,15 @@ class NationalIdExtractor:
                         if m and _is_plausible_id(m.group(1)):
                             fields.id_number = m.group(1)
                             conf.id_number = round(line_conf.get(line, 0.9), 3)
+                            found = True
+                    # By position: on two-column cards (Kenya: serial number left, ID number
+                    # right) OCR interleaves the columns, so the nearest number in reading order
+                    # can be the serial. Take the number physically closest to the label instead.
+                    if not found and line_boxes:
+                        value_line = _closest_id_value(texts, i, line_boxes)
+                        if value_line is not None:
+                            fields.id_number = _ID_PATTERN.search(value_line.upper()).group(1)
+                            conf.id_number = round(line_conf.get(value_line, 0.9), 3)
                             found = True
                     # Forward (value below label)
                     if not found:
