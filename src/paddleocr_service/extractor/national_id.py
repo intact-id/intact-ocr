@@ -225,12 +225,21 @@ class NationalIdExtractor:
                     break
             # Fallback: first plausible standalone ID on any line
             if not fields.id_number:
+                candidates = []
                 for line in texts:
                     m = _ID_PATTERN.search(line.upper())
                     if m and _is_plausible_id(m.group(1)) and not parse_date(line):
-                        fields.id_number = m.group(1)
-                        conf.id_number = round(line_conf.get(line, 0.7), 3)
-                        break
+                        candidates.append((m.group(1), line))
+                # No label was read. On Kenyan IDs the ID number has at most 8 digits and the
+                # card serial printed beside it has 9, so prefer a 7-8 digit all-numeric value
+                # over simply the first number in reading order (which can be the serial).
+                if country == "KEN":
+                    kenyan = [c for c in candidates if c[0].isdigit() and 7 <= len(c[0]) <= 8]
+                    candidates = kenyan + [c for c in candidates if c not in kenyan]
+                if candidates:
+                    value, line = candidates[0]
+                    fields.id_number = value
+                    conf.id_number = round(line_conf.get(line, 0.7), 3)
 
         # --- Full name ---
         if not fields.full_name:
