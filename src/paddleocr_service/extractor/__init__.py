@@ -39,7 +39,11 @@ def extract_document(ocr_result: dict) -> ExtractedDocument:
         # Partial extraction is better than returning zero fields.
         extractor = _EXTRACTORS["national_id"]
     if extractor is not None:
-        fields, field_conf = extractor.extract(texts, line_conf, country=country_iso3)
+        kwargs = {}
+        if isinstance(extractor, NationalIdExtractor):
+            # Positions let it tell apart side-by-side numbers (ID number vs card serial)
+            kwargs["line_boxes"] = {l["text"]: l["box"] for l in lines_data if l.get("box")}
+        fields, field_conf = extractor.extract(texts, line_conf, country=country_iso3, **kwargs)
     else:
         fields = DocumentFields()
         field_conf = FieldConfidence()
