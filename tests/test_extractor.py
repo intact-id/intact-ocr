@@ -74,3 +74,16 @@ def test_id_number_is_the_one_next_to_its_label_not_the_serial():
     doc = extract_document({"lines": KEN_TWO_COLUMN_LINES, "text": "", "line_count": len(KEN_TWO_COLUMN_LINES)})
     assert doc.fields.id_number == "12345678"
     assert doc.fields.full_name == "JANE WANJIRU OTIENO"
+
+
+# Same card read with no labels at all (only header, numbers, name and values): the serial
+# (9 digits) comes first in reading order. Structure from a real capture; values replaced.
+KEN_NO_LABELS = [
+    "JAMHURI YA KENYA", "REPUDLIC OF KENYA", "900000001", "12345678", "JANE WANJIRU OTIENO",
+    "A", "01.01.1990", "MALE", "NAIROBI", "NAIROBI", "02.02.2015",
+]
+
+
+def test_kenyan_id_number_without_labels_is_not_the_serial():
+    fields, _ = NationalIdExtractor().extract(KEN_NO_LABELS, {}, "KEN")
+    assert fields.id_number == "12345678"
